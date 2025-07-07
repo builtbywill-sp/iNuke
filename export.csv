@@ -1,0 +1,61 @@
+use rusqlite::{params, Connection, Result};
+use std::error::Error;
+use std::fs::File;
+use std::io::Write;
+
+fn main() -> Result<(), Box<dyn Error>> {
+    let conn = Connection::open("/Users/builtbybrown/Documents/chat.db")?;
+    let mut stmt = conn.prepare(
+        "SELECT
+            m.ROWID,
+            datetime(m.date / 1000000 + strftime('%s', '2001-01-01'), 'unixepoch') as message_date,
+            m.is_from_me,
+            m.text,
+            m.service,
+            m.cache_has_attachments,
+            h.id
+        FROM message m
+        LEFT JOIN handle h ON m.handle_id = h.ROWID
+        WHERE m.text IS NOT NULL AND m.date > 0"
+    )?;
+
+    let mut wtr = csv::Writer::from_path("/Users/builtbybrown/Documents/iNuke/export.csv")?;
+
+    wtr.write_record(&[
+        "ROWID",
+        "message_date",
+        "is_from_me",
+        "text",
+        "service",
+        "cache_has_attachments",
+        "handle_id",
+    ])?;
+
+    let message_iter = stmt.query_map(params![], |row| {
+        Ok((
+            row.get::<_, i64>(0)?,
+            row.get::<_, String>(1)?,
+            row.get::<_, i32>(2)?,
+            row.get::<_, Option<String>>(3)?,
+            row.get::<_, Option<String>>(4)?,
+            row.get::<_, i32>(5)?,
+            row.get::<_, Option<String>>(6)?,
+        ))
+    })?;
+
+    for message in message_iter {
+        let (rowid, message_date, is_from_me, text, service, cache_has_attachments, handle_id) = message?;
+        wtr.write_record(&[
+            rowid.to_string(),
+            message_date,
+            is_from_me.to_string(),
+            text.unwrap_or_default(),
+            service.unwrap_or_default(),
+            cache_has_attachments.to_string(),
+            handle_id.unwrap_or_default(),
+        ])?;
+    }
+
+    wtr.flush()?;
+    Ok(())
+}
