@@ -62,14 +62,44 @@ Here’s the full command:
 - You can test with copies of the database if needed
 - If you're on Windows, use `\\` double-backslashes for paths
 - Want to verify the output? Open the CSV with Excel, Numbers, or any text editor
+- You can pipe output directly into another script or CLI tool for batch processing
+
+---
+
+### 🍎 macOS Gotchas
+
+Because Apple hates unsigned binaries, you might see a scary “can’t verify” message.
+
+To fix it:
+```bash
+chmod +x ~/Downloads/iNuke-mac
+xattr -d com.apple.quarantine ~/Downloads/iNuke-mac
+```
+
+Then run like this:
+```bash
+~/Downloads/iNuke-mac ~/Downloads/chat.db 1234567890 ~/Downloads/messages.csv
+```
+
+Or, if you’re inside the Downloads folder:
+```bash
+cd ~/Downloads
+./iNuke-mac chat.db 1234567890 messages.csv
+```
+
+✅ Make sure:
+- Your `chat.db` file is in the same folder
+- You include the target phone number (or leave it out to dump all messages)
+- The output path is writable (Desktop, Downloads, etc.)
 
 ---
 
 ## 📤 Output Format
 
-| ROWID | message_date        | is_from_me | text     | date_raw     |
-|-------|---------------------|------------|----------|--------------|
-| 84016 | 2023-12-09 03:24:43 | 1          | Awwww    | 17207677209  |
+| ROWID   | message_date         | is_from_me | text                       | date_raw       |
+|---------|----------------------|------------|----------------------------|----------------|
+| 1234345 | 2024-04-19 17:02:33  | 1          | Yo can you send the file? | 98765432109876 |
+| 4567890 | 2024-04-20 08:14:12  | 0          | Yeah one sec               | 87654321098765 |
 
 ---
 
@@ -78,6 +108,9 @@ Here’s the full command:
 - macOS Sonoma
 - SQLite 3.45+
 - `chat.db` pulled from `/private/var/mobile/Library/SMS/chat.db`
+- Works with .db files pulled using iExplorer, iMazing, or full iOS backups
+- Tested on Intel and Apple Silicon Macs
+- Compatible with Terminal, iTerm2, and VS Code terminal
 
 ---
 
@@ -90,3 +123,6 @@ See [LICENSE](./LICENSE) for full terms — no commercial forking, selling, bund
 
 Built with ☠️ by BuiltByWill.  
 If this repo disappears, you were too slow.
+
+---
+🧠 Need help or want to contribute? File an issue or fork the repo. BuiltByWill is watching.
