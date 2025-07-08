@@ -2,6 +2,10 @@
 
 iNuke is a terminal-first iMessage extractor for serious users.  
 Pulls *everything* from `chat.db`, offline, in seconds. No cloud. No license key. No bullshit.
+- works great on Linux and macOS.
+Windows users… you might be waiting a bit.
+I can’t stand PowerShell — but bug me enough and maybe I’ll fix the binary.
+Or just wait for the GUI and thank me later.
 ![downloads](https://img.shields.io/github/downloads/builtbywill-sp/iNuke/total)
 ## ⚙️ Features
 
